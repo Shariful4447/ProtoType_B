@@ -51,17 +51,7 @@ import {
 // --- Firebase Configuration ---
 // FIX: Safely check for environment variable to prevent local crash
 const firebaseConfig =
-  typeof __firebase_config !== "undefined"
-    ? JSON.parse(__firebase_config)
-    : {
-        apiKey: "AIzaSyCLpC-c260RMnfnzHYenSwJlCPvvUXju2U",
-        authDomain: "prototypeb-832a7.firebaseapp.com",
-        projectId: "prototypeb-832a7",
-        storageBucket: "prototypeb-832a7.firebasestorage.app",
-        messagingSenderId: "885377013883",
-        appId: "1:885377013883:web:f0dccd45eeb4cd37092ade",
-        measurementId: "G-9KDDVB1DVR",
-      };
+  typeof __firebase_config !== "undefined" ? JSON.parse(__firebase_config) : {};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
