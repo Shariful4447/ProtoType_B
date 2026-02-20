@@ -801,7 +801,7 @@ export default function App() {
         {activeScenario === "home" ? (
           <div className="max-w-7xl mx-auto px-6 py-10 w-full">
             <div
-              className={`${THEME.primary} rounded-[2.5rem] p-16 text-center text-white mb-12 shadow-2xl relative overflow-hidden`}
+              className={`${THEME.primary} rounded-[2.5rem] py-24 text-center text-white mb-12 shadow-2xl relative overflow-hidden`}
             >
               <h1 className="text-6xl font-black mb-4 tracking-tighter uppercase leading-none">
                 Welcome to PublicSphere
