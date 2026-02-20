@@ -218,6 +218,8 @@ async function mockNlpApi(query, scenarioId) {
   await new Promise((resolve) => setTimeout(resolve, delay));
   const text = query.toLowerCase().trim();
 
+  // --- 1. Handling Detailed Expansion (View Details Clicks) ---
+
   if (text === "apply for subsidy") {
     return {
       text: "Childcare subsidies help cover care costs, with application processes varying by region (e.g., National Childcare Scheme (NCS) in Ireland, (Services Australia) in Australia. Key requirements usually include proof of income, employment/study status, and child’s details (PPSN/DOB), typically processed online via government portals.\n\n**Common Steps to Apply**\n• **Check Eligibility:** Assess income limits and required hours of care.\n• **Gather Documents:** Prepare pay stubs, employment letters, and proof of residency.\n• **Submit Application:** Use official government portals.\n• **Confirm Provider:** Ensure your childcare provider is registered/contracted with the scheme.\n\n**Regional Examples**\n• **Ireland (NCS):** Offers universal and income-assessed subsidies.\n• **Australia (CCS):** Requires a claim via Centrelink.\n\n**Important:** Apply as soon as possible, as some schemes cannot backdate payments more than 28 days.",
@@ -240,6 +242,8 @@ async function mockNlpApi(query, scenarioId) {
       },
     };
   }
+
+  // --- 2. Handling Topic Clicks ---
 
   if (text === "eligibility calculator") {
     return {
@@ -273,6 +277,8 @@ async function mockNlpApi(query, scenarioId) {
       },
     };
   }
+
+  // --- 3. Base Intent Matching (Short Answer Leads) ---
 
   const getRichResponse = (context) => {
     switch (context) {
@@ -530,17 +536,18 @@ const MessageBubble = ({ message, onCardAction }) => {
   return (
     <div className="flex w-full justify-start mb-6">
       <div className="flex max-w-[95%] flex-row gap-3">
-        {/* MESSAGE AVATAR: Remains a standard circular avatar linked to THEME */}
         <div
-          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${THEME.botAvatar} shadow-sm mt-auto border border-gray-200 shadow-sm`}
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white border border-gray-200 ${THEME.text} shadow-sm mt-auto`}
         >
           <Bot size={16} />
         </div>
         <div className="flex flex-col gap-3 w-full bg-white border border-gray-100 rounded-2xl rounded-tl-none shadow-lg overflow-hidden">
+          {/* Main Text Content (The "Short Answer" or "Description") */}
           <div className="p-5 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
             {parseMarkdown(data.text)}
           </div>
 
+          {/* Action Cards Grid (Styled per reference image) */}
           {data.cards && data.cards.length > 0 && (
             <div className="grid grid-cols-2 gap-4 px-5 py-2">
               {data.cards.map((card, idx) => {
@@ -578,6 +585,7 @@ const MessageBubble = ({ message, onCardAction }) => {
             </div>
           )}
 
+          {/* Related Topics (Arrows per reference image) */}
           {data.topics && data.topics.length > 0 && (
             <div className="bg-slate-50/50 px-5 py-3 border-y border-gray-100 mt-2">
               <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
@@ -601,6 +609,7 @@ const MessageBubble = ({ message, onCardAction }) => {
             </div>
           )}
 
+          {/* Prototype B Reasoning Footer */}
           {/* {data.details && (
             <div className="bg-white">
               <button
@@ -763,12 +772,10 @@ export default function App() {
       >
         <div className="max-w-7xl mx-auto w-full px-6 flex items-center justify-between text-white">
           <div
-            className="flex items-center gap-2 cursor-pointer group"
+            className="flex items-center gap-2 cursor-pointer"
             onClick={() => setActiveScenario("home")}
           >
-            <div className="bg-white/20 p-1 rounded-lg group-hover:bg-white/30 transition-colors">
-              <Grid size={22} />
-            </div>
+            <Grid size={22} />
             <span className="font-extrabold text-2xl tracking-tighter uppercase">
               PublicSphere
               <span className="text-blue-100 font-normal opacity-80 lowercase">
@@ -787,7 +794,7 @@ export default function App() {
               <button
                 key={s.id}
                 onClick={() => setActiveScenario(s.id)}
-                className="text-[11px] font-black uppercase tracking-widest text-white/80 hover:text-white flex items-center gap-1.5 transition-colors"
+                className="text-[11px] font-black uppercase tracking-widest text-white/80 hover:text-white flex items-center gap-1.5"
               >
                 {s.icon}
                 {s.name}
@@ -830,7 +837,7 @@ export default function App() {
                   className="bg-white border border-slate-100 rounded-3xl p-8 cursor-pointer hover:shadow-2xl hover:-translate-y-2 transition-all group shadow-sm"
                 >
                   <div
-                    className={`w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-6 text-blue-700 group-hover:bg-blue-700 group-hover:text-white transition-colors shadow-inner`}
+                    className={`w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-6 ${THEME.text} group-hover:${THEME.primary} group-hover:text-white transition-colors`}
                   >
                     {scen.icon}
                   </div>
@@ -840,7 +847,9 @@ export default function App() {
                   <p className="text-sm text-slate-500 leading-relaxed mb-6">
                     {scen.heroSubtitle}
                   </p>
-                  <div className="text-blue-700 font-bold flex items-center gap-1 group-hover:gap-3 transition-all text-xs tracking-widest uppercase">
+                  <div
+                    className={`${THEME.text} font-bold flex items-center gap-1 group-hover:gap-3 transition-all text-xs tracking-widest uppercase`}
+                  >
                     ACCESS <ArrowRight size={16} />
                   </div>
                 </div>
@@ -887,7 +896,7 @@ export default function App() {
             <div className="bg-white rounded-3xl shadow-xl p-12 flex flex-col lg:flex-row gap-16 items-center border border-slate-100">
               <div className="flex-1 space-y-8">
                 <span
-                  className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-blue-50 text-blue-700 border border-blue-100 italic`}
+                  className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-blue-50 ${THEME.text} italic`}
                 >
                   Official Department
                 </span>
@@ -899,7 +908,7 @@ export default function App() {
                 </p>
                 <div className="flex gap-4">
                   <button
-                    className={`px-10 py-5 bg-blue-700 text-white rounded-2xl font-black shadow-lg hover:bg-blue-800 transition-all uppercase tracking-widest text-sm`}
+                    className={`px-10 py-5 ${THEME.primary} text-white rounded-2xl font-black shadow-lg hover:opacity-90 transition-all uppercase tracking-widest text-sm`}
                   >
                     Start Service
                   </button>
@@ -924,33 +933,32 @@ export default function App() {
       <div className="fixed bottom-8 right-8 z-50">
         {isOpen && (
           <div className="w-[90vw] md:w-[400px] h-[600px] bg-white rounded-[2.5rem] shadow-3xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 border border-gray-100">
-            {/* CHAT HEADER: Rounded square, semi-transparent icon style as per image */}
             <div
-              className={`h-24 ${THEME.primary} p-8 flex items-center justify-between shadow-lg shrink-0`}
+              className={`h-20 ${THEME.primary} p-6 flex items-center justify-between text-white`}
             >
-              <div className="flex items-center gap-4">
-                {/* ICON BOX: Rounded square with semi-transparent background and border */}
-                <div className="w-12 h-12 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center shadow-inner backdrop-blur-md">
-                  <Bot size={24} className="text-white" />
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center ${THEME.botAvatar} shadow-inner`}
+                >
+                  <Bot size={20} />
                 </div>
-                <div className="flex flex-col">
-                  <h3 className="font-black text-xl tracking-tight leading-none mb-1.5 tracking-tighter text-white">
+                <div>
+                  <h3 className="font-black text-lg tracking-tight leading-none mb-1">
                     askMe
                   </h3>
-                  <div className="flex items-center gap-1.5 text-[9px] font-black text-blue-100 uppercase tracking-widest">
-                    <span className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.6)]"></span>{" "}
+                  <div className="flex items-center gap-1 text-[10px] font-bold text-blue-100 uppercase tracking-widest">
+                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>{" "}
                     Live Support
                   </div>
                 </div>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-white opacity-70 hover:opacity-100 transition-opacity p-1"
+                className="opacity-70 hover:opacity-100 p-1"
               >
                 <X size={28} />
               </button>
             </div>
-
             <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
               {messages.map((m, i) => (
                 <MessageBubble
@@ -961,8 +969,10 @@ export default function App() {
               ))}
               {isTyping && (
                 <div className="flex justify-start mb-4">
-                  <div className="bg-white border border-gray-100 px-5 py-3 rounded-2xl rounded-tl-none shadow-sm animate-pulse text-blue-600 font-bold text-[10px] uppercase tracking-widest">
-                    THINKING...
+                  <div className="bg-white border border-gray-100 px-4 py-3 rounded-2xl rounded-tl-none shadow-sm">
+                    <span className="animate-pulse text-slate-400 font-bold text-xs">
+                      Processing...
+                    </span>
                   </div>
                 </div>
               )}
@@ -970,19 +980,19 @@ export default function App() {
             </div>
             <form
               onSubmit={(e) => handleSend(e)}
-              className="p-6 bg-white border-t border-slate-100"
+              className="p-4 bg-white border-t border-slate-100"
             >
-              <div className="relative flex items-center group">
+              <div className="relative flex items-center border-2 border-blue-600 rounded-[1.5rem] bg-gray-50 p-1 shadow-inner">
                 <input
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder="How can we help?"
-                  className="w-full bg-slate-50 border-2 border-slate-100 rounded-[1.5rem] py-4 pl-6 pr-14 text-sm font-medium focus:outline-none focus:border-blue-600 focus:bg-white transition-all shadow-inner"
+                  className="w-full bg-transparent py-3 pl-4 pr-12 text-sm font-medium focus:outline-none"
                 />
                 <button
                   type="submit"
                   disabled={!inputValue.trim()}
-                  className="absolute right-2 p-2.5 bg-blue-700 text-white rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-30"
+                  className="absolute right-1.5 p-2.5 text-slate-300 hover:text-blue-600 transition-colors disabled:opacity-50"
                 >
                   <Send size={20} />
                 </button>
@@ -993,7 +1003,7 @@ export default function App() {
                   onClick={() =>
                     setInputValue(SCENARIOS[activeScenario].querySuggestion)
                   }
-                  className={`mt-4 text-[10px] font-black text-blue-700 hover:text-blue-900 w-full text-center flex items-center justify-center gap-2 uppercase tracking-widest transition-colors`}
+                  className={`mt-3 text-[10px] font-bold ${THEME.text} hover:opacity-80 w-full text-center flex items-center justify-center gap-1 uppercase tracking-widest`}
                 >
                   <HelpCircle size={14} /> Suggestion: "
                   {SCENARIOS[activeScenario].querySuggestion}"
@@ -1005,10 +1015,9 @@ export default function App() {
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            className={`w-20 h-20 rounded-full shadow-2xl flex items-center justify-center text-white bg-blue-700 hover:scale-110 active:scale-95 transition-all border-2 border-white/20 relative group`}
+            className={`w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-white ${THEME.primary} hover:scale-110 transition-all border-2 border-white/20`}
           >
-            <div className="absolute inset-0 rounded-full bg-blue-400 animate-ping opacity-10 group-hover:opacity-20 transition-opacity"></div>
-            <MessageSquare size={36} className="relative z-10 stroke-[1.5px]" />
+            <MessageSquare size={32} />
           </button>
         )}
       </div>
