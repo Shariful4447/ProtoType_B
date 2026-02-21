@@ -961,7 +961,7 @@ export default function App() {
               ))}
               {isTyping && (
                 <div className="flex justify-start mb-4">
-                  <div className="bg-white border border-gray-100 px-5 py-3 rounded-2xl rounded-tl-none shadow-sm animate-pulse text-blue-600 font-bold text-[10px] uppercase tracking-widest">
+                  <div className="bg-white border border-gray-100 px-5 py-3 rounded-2xl rounded-tl-none shadow-sm animate-pulse text-blue-600 font-bold text-[10px] uppercase tracking-widest italic">
                     THINKING...
                   </div>
                 </div>
